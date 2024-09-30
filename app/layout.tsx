@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { Providers } from "@/components/ui/providers";
 import ThemeSwitch from "@/components/ui/theme-switch";
+import { Header } from "@/components/header";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,19 +14,21 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          <div>
-            <ThemeSwitch />
+          <main>
+            <Header session={session} />
             {children}
-          </div>
+          </main>
           <Toaster expand={false} richColors />
         </Providers>
       </body>
