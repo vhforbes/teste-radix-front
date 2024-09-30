@@ -16,7 +16,7 @@ export async function authenticate(
     const password = formData.get("password");
 
     await signIn("credentials", {
-      redirectTo: "/dashboard/home",
+      redirectTo: "/dashboard",
       email,
       password,
     });

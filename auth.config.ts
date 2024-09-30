@@ -5,6 +5,7 @@ import { JWT } from "next-auth/jwt";
 interface CustomJwtPayload extends JWT {
   sub?: string;
   role: string;
+  user_id: string;
 }
 
 export const authConfig = {
@@ -21,6 +22,8 @@ export const authConfig = {
           access_tokenExpires: decodedJwt.exp ?? 0,
           role: decodedJwt.role ?? "",
           sub: decodedJwt.sub,
+          user_id: decodedJwt.user_id,
+          user_name: decodedJwt.user_name,
         };
       }
       if (user?.access_token) {
@@ -29,10 +32,13 @@ export const authConfig = {
       return token;
     },
     async session({ session, token }) {
+      console.log(token);
+
       if (token.access_token) {
         session.access_token = token.access_token as string;
-        session.role = token.role as string;
         session.user.email = token.sub as string;
+        session.user.id = token.user_id as string;
+        session.user.name = token.user_name as string;
       }
 
       return session;
@@ -43,13 +49,18 @@ export const authConfig = {
       const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
       const isOnAuth = nextUrl.pathname.startsWith("/auth");
 
+      console.log(isOnDashboard);
+      console.log(isLoggedIn);
+
+      if (!isLoggedIn && !isOnAuth)
+        return Response.redirect(new URL("/auth/login", nextUrl));
+
+      if (isLoggedIn && isOnAuth)
+        return Response.redirect(new URL("/dashboard", nextUrl));
+
       if (isOnDashboard) {
         if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
-      } else if (!isLoggedIn && !isOnAuth) {
-        return Response.redirect(new URL("/auth/login", nextUrl));
+        return false;
       }
 
       return true;

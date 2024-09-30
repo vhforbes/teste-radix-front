@@ -1,7 +1,7 @@
 "use server";
 
+import { auth } from "@/auth";
 import { fetchServer } from "@/utils/fetchServer";
-import { redirect } from "next/navigation";
 import { z, ZodError } from "zod";
 
 const createAccountSchema = z
@@ -66,5 +66,50 @@ export async function CreateUser(formData: FormData) {
 
     console.error(error);
     throw error;
+  }
+}
+
+export async function CreateVideo(formData: FormData) {
+  try {
+    const session = await auth();
+
+    const formObject = {
+      title: formData.get("title"),
+      url: formData.get("url"),
+    };
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/video`;
+
+    const body = JSON.stringify({
+      user_id: session?.user?.id,
+      title: formObject.title,
+      url: formObject.url,
+    });
+
+    const response = await fetchServer(url, {
+      method: "POST",
+      body,
+    });
+
+    const data = await response?.json();
+    if (response.status !== 200) {
+      return {
+        message: data.detail,
+        status: response?.status,
+      };
+    }
+
+    return {
+      message: data.message,
+      status: response?.status,
+    };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.log("Zod validation errors:", error.errors);
+      return {
+        message: error.errors.map((err) => err.message).join(", "),
+        status: 400,
+      };
+    }
   }
 }
