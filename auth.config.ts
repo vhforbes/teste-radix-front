@@ -44,11 +44,15 @@ export const authConfig = {
 
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
+      const isOnRoot = nextUrl.pathname === "/";
       const isOnAuth = nextUrl.pathname.startsWith("/auth");
+      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
 
       if (!isLoggedIn && !isOnAuth)
         return Response.redirect(new URL("/auth/login", nextUrl));
+
+      if (isLoggedIn && isOnRoot)
+        return Response.redirect(new URL("/dashboard", nextUrl));
 
       if (isLoggedIn && isOnAuth)
         return Response.redirect(new URL("/dashboard", nextUrl));

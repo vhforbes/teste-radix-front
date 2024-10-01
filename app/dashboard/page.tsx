@@ -8,9 +8,9 @@ import { Suspense } from "react";
 export default async function Dashboard() {
   return (
     <div className="mt-10 flex flex-col items-center">
-      <Button>
-        <Link href={"/dashboard/create-video"}>Publicar Video</Link>
-      </Button>
+      <Link href={"/dashboard/create-video"}>
+        <Button>Publicar Video</Button>
+      </Link>
       <h1 className="mt-12 text-2xl font-bold">Vídeos Publicados</h1>
       <div className="mt-8">
         <Suspense fallback={<VideoSkeleton />}>

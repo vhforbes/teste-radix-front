@@ -15,12 +15,15 @@ export const VideosMosaic = async () => {
     method: "GET",
   });
 
-  const videos = await response.json();
+  const videos: Video[] = await response.json();
 
   const getThumbnailUrl = (url: string) => {
     const videoId = url.split("v=")[1];
     return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
   };
+
+  if (!videos.length)
+    return <div>Você ainda não possui vídeos publicados!</div>;
 
   return (
     <div className="mx-auto flex flex-wrap items-center justify-center gap-8">

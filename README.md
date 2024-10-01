@@ -1,29 +1,28 @@
-# How to Set Up a Next.js Project Using Vougan's Template
+# Instruções para rodar o frontend
 
-## 1. Install the Template
-Create the project and install dependencies
+## Requisitos:
 
-```bash
-npx create-next-app -e https://github.com/vougan-finance/next-template
-```
+- Node
+- Npm
 
-```
-cd my-new-project
-npm i
-```
+## Instalando Deps
 
-## 2. Set Up Environment Variables
-Create a .env.local file
-```bash
-NEXT_PUBLIC_API_URL=https://api.example.com
-```
+Basta rodar `npm i` para instalar as depedências necessárias.
 
-## 3. Change Colors in globals.css
+## Condigurando o .env
 
-Example:
-```
-:root {
-  --primary-color: #3490dc;
-  --secondary-color: #ffed4a;
-}
-```
+Copie para um arquivo .env o .env.example fornecido
+Obs: Garanta que a url da api é a mesma que está rodando localmente.
+
+## Instalando deps
+
+Basta rodar `npm i` para instalar as depedências necessárias.
+
+## Rodando
+
+Para rodar `npm run dev`
+
+Acesse o front em: http://localhost:3000
+
+Em caso de dificuldades estou à disposição para ajudar.
+(11) 96383-5105
