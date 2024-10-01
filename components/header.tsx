@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { GloboSvg } from "./icons/globoSvg";
+import { SignOutButton } from "./sign-out-button";
 import ThemeSwitch from "./ui/theme-switch";
 import { Session } from "next-auth";
 
@@ -12,9 +12,13 @@ export const Header = ({ session }: { session: Session | null }) => {
       <div className="w-10 md:mx-auto">
         <GloboSvg className="fill-white" />
       </div>
-      <div className="flex w-28 items-center gap-4 font-bold text-white">
-        {session ? `Olá ${session.user?.name}` : null}
-      </div>
+
+      {session ? (
+        <div className="flex w-28 flex-col items-end font-bold text-white">
+          Olá {session.user?.name}
+          <SignOutButton />
+        </div>
+      ) : null}
     </div>
   );
 };

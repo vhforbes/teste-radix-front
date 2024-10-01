@@ -9,7 +9,7 @@ export const VideosMosaic = async () => {
   const listVideosUrl = `${process.env.NEXT_PUBLIC_API_URL}/videos`;
 
   // Just here to showcase the <suspense>
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const response = await fetchServer(listVideosUrl, {
     method: "GET",
@@ -27,7 +27,10 @@ export const VideosMosaic = async () => {
       {videos.map((video: Video) => (
         <div key={video.id} className="relative flex flex-col items-center">
           {/* Video Thumbnail */}
-          <Link href={video.url}>
+          <Link
+            href={video.url}
+            className="hover:shadow-lg dark:shadow-slate-800"
+          >
             <Image
               src={getThumbnailUrl(video.url)}
               alt={video.title}
@@ -43,7 +46,7 @@ export const VideosMosaic = async () => {
 
             {/* Edit Icon */}
             <Link href={`/dashboard/edit-video/${video.id}`} passHref>
-              <PiNotePencilBold className="h-5 w-5 cursor-pointer text-gray-500 hover:text-gray-700" />
+              <PiNotePencilBold className="h-5 w-5 cursor-pointer text-neutral hover:text-gray-500" />
             </Link>
 
             <DeleteVideoForm id={video.id} />

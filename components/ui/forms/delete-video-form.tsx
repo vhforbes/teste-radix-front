@@ -19,9 +19,12 @@ export const DeleteVideoForm = ({ id }: { id: number }) => {
   };
 
   return (
-    <form action={delete_form}>
+    <form
+      action={delete_form}
+      className="h-5 w-5 cursor-pointer text-red-400 hover:text-gray-500"
+    >
       <button type="submit">
-        <MdDeleteForever width={24} height={24} />
+        <MdDeleteForever className="h-5 w-5" />
       </button>
     </form>
   );
