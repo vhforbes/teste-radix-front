@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { InputGeneric } from "../input-generic";
 import { Button } from "../button";
-import { CreateVideo } from "@/lib/actions";
+import { EditVideo } from "@/lib/actions";
 import { toast } from "sonner";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
+import { Video } from "@/types/interfaces";
 
-export const CreateVideoForm = () => {
+export const EditVideoForm = ({ videoToEdit }: { videoToEdit: Video }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
-  const create_video = async (form_data: FormData) => {
-    const response = await CreateVideo(form_data);
+  const edit_video = async (form_data: FormData) => {
+    const response = await EditVideo(form_data, videoToEdit.id);
 
     if (response?.status !== 200) {
       toast.error("Algo deu errado!");
@@ -24,7 +25,8 @@ export const CreateVideoForm = () => {
     }
 
     if (response.status === 200) {
-      toast.success("Vídeo criado com sucesso");
+      toast.success("Vídeo editado com sucesso");
+
       redirect("/dashboard");
     }
   };
@@ -33,7 +35,7 @@ export const CreateVideoForm = () => {
     <form
       noValidate
       className="flex w-full flex-col justify-center"
-      action={create_video}
+      action={edit_video}
     >
       <div>
         <label htmlFor="name" className="input-label">
@@ -44,6 +46,7 @@ export const CreateVideoForm = () => {
           type="text"
           placeholder="Título do Vídeo"
           className="mb-6"
+          defaultValue={videoToEdit.title}
         />
       </div>
 
@@ -57,11 +60,12 @@ export const CreateVideoForm = () => {
           placeholder="https://www.youtube.com/watch?v=w5ebcowAJD8"
           required
           className="mb-6"
+          defaultValue={videoToEdit.url}
         />
       </div>
 
       <div className="w-full text-center">
-        <Button type="submit">Criar video</Button>
+        <Button type="submit">Editar video</Button>
       </div>
 
       <div

@@ -32,8 +32,6 @@ export const authConfig = {
       return token;
     },
     async session({ session, token }) {
-      console.log(token);
-
       if (token.access_token) {
         session.access_token = token.access_token as string;
         session.user.email = token.sub as string;
@@ -48,9 +46,6 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
       const isOnAuth = nextUrl.pathname.startsWith("/auth");
-
-      console.log(isOnDashboard);
-      console.log(isLoggedIn);
 
       if (!isLoggedIn && !isOnAuth)
         return Response.redirect(new URL("/auth/login", nextUrl));

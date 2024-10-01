@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { fetchServer } from "@/utils/fetchServer";
+import { revalidatePath } from "next/cache";
 import { z, ZodError } from "zod";
 
 const createAccountSchema = z
@@ -69,6 +70,18 @@ export async function CreateUser(formData: FormData) {
   }
 }
 
+const youtubeUrlRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+
+const videoSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  url: z
+    .string()
+    .url("Formato de URL inválido")
+    .refine((url) => youtubeUrlRegex.test(url), {
+      message: "Somente vídeos do YouTube são permitidos",
+    }),
+});
+
 export async function CreateVideo(formData: FormData) {
   try {
     const session = await auth();
@@ -77,6 +90,8 @@ export async function CreateVideo(formData: FormData) {
       title: formData.get("title"),
       url: formData.get("url"),
     };
+
+    videoSchema.parse(formObject);
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/video`;
 
@@ -99,6 +114,8 @@ export async function CreateVideo(formData: FormData) {
       };
     }
 
+    revalidatePath("dashboard");
+
     return {
       message: data.message,
       status: response?.status,
@@ -111,5 +128,87 @@ export async function CreateVideo(formData: FormData) {
         status: 400,
       };
     }
+  }
+}
+
+export async function EditVideo(formData: FormData, videoId: number) {
+  try {
+    const session = await auth();
+
+    const formObject = {
+      title: formData.get("title"),
+      url: formData.get("url"),
+    };
+
+    videoSchema.parse(formObject);
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/video/${videoId}`;
+
+    const body = JSON.stringify({
+      user_id: session?.user?.id,
+      title: formObject.title,
+      url: formObject.url,
+    });
+
+    const response = await fetchServer(url, {
+      method: "PATCH",
+      body,
+    });
+
+    const data = await response?.json();
+    if (response.status !== 200) {
+      return {
+        message: data.detail,
+        status: response?.status,
+      };
+    }
+
+    revalidatePath("dashboard");
+
+    return {
+      message: data.message,
+      status: response?.status,
+    };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.log("Zod validation errors:", error.errors);
+      return {
+        message: error.errors.map((err) => err.message).join(", "),
+        status: 400,
+      };
+    }
+  }
+}
+
+export async function DeleteVideo(formData: FormData) {
+  const id = Number(formData.get("id"));
+
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/video/${id}`;
+
+  try {
+    const response = await fetchServer(url, {
+      method: "DELETE",
+    });
+
+    const data = await response?.json();
+
+    console.log(response);
+
+    if (response.status !== 200) {
+      return {
+        message: data.detail,
+        status: response?.status,
+      };
+    }
+
+    revalidatePath("dashboard");
+
+    return {
+      message: data.message,
+      status: response?.status,
+    };
+  } catch (error) {
+    console.error("Failed to delete video", error);
+    throw error;
   }
 }

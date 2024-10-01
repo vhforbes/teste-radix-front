@@ -17,8 +17,6 @@ export const CreateUserForm = () => {
     if (response?.status !== 200) {
       toast.error("Algo deu errado!");
 
-      console.log(response);
-
       setErrorMessage(response?.message);
 
       return;
