@@ -21,11 +21,16 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           const parsedCredentials = signInSchema.parse(credentials);
           const { email, password } = parsedCredentials;
 
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-            method: "POST",
-            body: JSON.stringify({ email, password }),
-            headers: { "Content-Type": "application/json" },
-          });
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            {
+              method: "POST",
+              body: JSON.stringify({ username: email, password }),
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+
+          console.log(res);
 
           if (!res.ok) {
             if (res.status === 401) {
@@ -35,6 +40,8 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           }
 
           const data: AuthenticationResponse = await res.json();
+
+          console.log(data);
 
           if (isAuthenticationResponse(data)) {
             return {

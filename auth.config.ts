@@ -16,14 +16,17 @@ export const authConfig = {
     async jwt({ token, user }) {
       if (user && user.access_token) {
         const decodedJwt: CustomJwtPayload = jwtDecode(user.access_token);
+
+        console.log(decodedJwt);
+
         return {
           ...token,
           access_token: user.access_token,
           access_tokenExpires: decodedJwt.exp ?? 0,
           role: decodedJwt.role ?? "",
           sub: decodedJwt.sub,
-          user_id: decodedJwt.user_id,
-          user_name: decodedJwt.user_name,
+          user_id: decodedJwt.sub,
+          user_name: decodedJwt.name,
         };
       }
       if (user?.access_token) {
@@ -34,7 +37,7 @@ export const authConfig = {
     async session({ session, token }) {
       if (token.access_token) {
         session.access_token = token.access_token as string;
-        session.user.email = token.sub as string;
+        // session.user.email = token.sub as string;
         session.user.id = token.user_id as string;
         session.user.name = token.user_name as string;
       }

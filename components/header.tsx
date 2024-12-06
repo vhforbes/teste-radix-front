@@ -1,4 +1,3 @@
-import { GloboSvg } from "./icons/globoSvg";
 import { SignOutButton } from "./sign-out-button";
 import ThemeSwitch from "./ui/theme-switch";
 import { Session } from "next-auth";
@@ -9,8 +8,8 @@ export const Header = ({ session }: { session: Session | null }) => {
       <div className="hidden text-white md:block md:w-28">
         <ThemeSwitch />
       </div>
-      <div className="w-10 md:mx-auto">
-        <GloboSvg className="fill-white" />
+      <div className="md:mx-auto">
+        <p>RADIX TEST</p>
       </div>
 
       {session ? (

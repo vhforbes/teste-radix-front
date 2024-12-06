@@ -64,9 +64,11 @@ export async function create_account(
       confirmPassword: formData.get("confirm-password"),
     };
 
+    console.log(formObject);
+
     createAccountSchema.parse(formObject);
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/users`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/user`;
 
     const body = JSON.stringify({
       name: formObject.name,

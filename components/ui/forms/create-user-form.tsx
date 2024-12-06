@@ -14,15 +14,15 @@ export const CreateUserForm = () => {
   const create_user = async (form_data: FormData) => {
     const response = await CreateUser(form_data);
 
-    if (response?.status !== 200) {
+    console.log(response);
+
+    if (response?.status !== 201) {
       toast.error("Algo deu errado!");
-
       setErrorMessage(response?.message);
-
       return;
     }
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       toast.success("Usuário criado com sucesso");
 
       redirect("/auth/login");

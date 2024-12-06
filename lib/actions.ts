@@ -20,6 +20,8 @@ const createAccountSchema = z
   });
 
 export async function CreateUser(formData: FormData) {
+  console.log("Getting create user request");
+
   try {
     const formObject = {
       name: formData.get("name"),
@@ -30,7 +32,7 @@ export async function CreateUser(formData: FormData) {
 
     createAccountSchema.parse(formObject);
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/users`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/user`;
 
     const body = JSON.stringify({
       name: formObject.name,
@@ -47,7 +49,7 @@ export async function CreateUser(formData: FormData) {
 
     if (response.status !== 200) {
       return {
-        message: data.detail,
+        message: data.message,
         status: response?.status,
       };
     }
