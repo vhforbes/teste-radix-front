@@ -23,31 +23,38 @@ export default async function Dashboard({
   const data = await res.json();
 
   return (
-    <div className="mt-10 flex w-full flex-col items-center">
-      <SelectInput
-        className=""
-        name="Tempo"
-        options={[
-          {
-            label: "24 Horas",
-            value: "24h",
-          },
-          {
-            label: "48 Horas",
-            value: "48h",
-          },
-          {
-            label: "1 Semana",
-            value: "1w",
-          },
-          {
-            label: "1 Mês",
-            value: "1m",
-          },
-        ]}
-      />
+    <div className="mt-10 flex w-full flex-col items-center gap-4">
+      <div className="flex items-center gap-4">
+        <label>Selecione o período:</label>
+        <SelectInput
+          className=""
+          name="Tempo"
+          options={[
+            {
+              label: "24 Horas",
+              value: "24h",
+            },
+            {
+              label: "48 Horas",
+              value: "48h",
+            },
+            {
+              label: "1 Semana",
+              value: "1w",
+            },
+            {
+              label: "1 Mês",
+              value: "1m",
+            },
+          ]}
+        />
+      </div>
       <div className="">
-        <SensorReadingTable data={data} />
+        {!data.length ? (
+          <p>Não existem dados para o período selecionado.</p>
+        ) : (
+          <SensorReadingTable data={data} />
+        )}
       </div>
     </div>
   );

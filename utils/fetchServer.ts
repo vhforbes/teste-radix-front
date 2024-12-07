@@ -3,12 +3,15 @@ import { auth } from "@/auth";
 export async function fetchServer(url: string, options: RequestInit) {
   const session = await auth();
 
+  const isFormData = options.body instanceof FormData;
+
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
         Authorization: `Bearer ${session?.access_token}`,
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
+        ...options.headers, // Allow overriding
       },
     });
 
@@ -17,8 +20,9 @@ export async function fetchServer(url: string, options: RequestInit) {
     }
 
     if (response.status === 401) {
-      throw new Error("Unautorized");
+      throw new Error("Unauthorized");
     }
+
     return response;
   } catch (error) {
     console.error("Network or other error", error);

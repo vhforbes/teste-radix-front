@@ -34,13 +34,11 @@ export default function ThemeSwitch() {
     );
   }
 
-  if (resolvedTheme === "light") {
-    return (
-      <FiMoon
-        className="my-2 stroke-white transition-all hover:rotate-180 hover:cursor-pointer"
-        size={20}
-        onClick={() => setTheme("dark")}
-      />
-    );
-  }
+  return (
+    <FiMoon
+      className="my-2 stroke-white transition-all hover:rotate-180 hover:cursor-pointer"
+      size={20}
+      onClick={() => setTheme("dark")}
+    />
+  );
 }

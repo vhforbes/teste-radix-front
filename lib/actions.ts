@@ -72,145 +72,38 @@ export async function CreateUser(formData: FormData) {
   }
 }
 
-const youtubeUrlRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+export const UploadCSV = async (form_data: FormData) => {
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/csv-upload/upload`;
 
-const videoSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  url: z
-    .string()
-    .url("Formato de URL inválido")
-    .refine((url) => youtubeUrlRegex.test(url), {
-      message: "Somente vídeos do YouTube são permitidos",
-    }),
-});
+  const file: any = form_data.get("file");
 
-export async function CreateVideo(formData: FormData) {
-  try {
-    const session = await auth();
-
-    const formObject = {
-      title: formData.get("title"),
-      url: formData.get("url"),
+  if (!file.size) {
+    return {
+      message: "Nenhum arquivo selecionado",
+      status: 0,
     };
+  }
 
-    videoSchema.parse(formObject);
-
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/video`;
-
-    const body = JSON.stringify({
-      user_id: session?.user?.id,
-      title: formObject.title,
-      url: formObject.url,
-    });
-
+  try {
     const response = await fetchServer(url, {
       method: "POST",
-      body,
+      body: form_data, // Correctly sends form-data
+      headers: {}, // No Content-Type here
     });
 
-    const data = await response?.json();
-    if (response.status !== 200) {
+    if (!response.ok) {
       return {
-        message: data.detail,
-        status: response?.status,
+        status: response,
       };
     }
 
-    revalidatePath("dashboard");
+    revalidatePath("/upload-csv");
 
     return {
-      message: data.message,
-      status: response?.status,
+      status: response.status,
     };
-  } catch (error) {
-    if (error instanceof ZodError) {
-      console.log("Zod validation errors:", error.errors);
-      return {
-        message: error.errors.map((err) => err.message).join(", "),
-        status: 400,
-      };
-    }
+  } catch (error: any) {
+    console.error("Upload CSV Error:", error.message);
+    return { status: 0 || 500, message: error.message };
   }
-}
-
-export async function EditVideo(formData: FormData, videoId: number) {
-  try {
-    const session = await auth();
-
-    const formObject = {
-      title: formData.get("title"),
-      url: formData.get("url"),
-    };
-
-    videoSchema.parse(formObject);
-
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/video/${videoId}`;
-
-    const body = JSON.stringify({
-      user_id: session?.user?.id,
-      title: formObject.title,
-      url: formObject.url,
-    });
-
-    const response = await fetchServer(url, {
-      method: "PATCH",
-      body,
-    });
-
-    const data = await response?.json();
-    if (response.status !== 200) {
-      return {
-        message: data.detail,
-        status: response?.status,
-      };
-    }
-
-    revalidatePath("dashboard");
-
-    return {
-      message: data.message,
-      status: response?.status,
-    };
-  } catch (error) {
-    if (error instanceof ZodError) {
-      console.log("Zod validation errors:", error.errors);
-      return {
-        message: error.errors.map((err) => err.message).join(", "),
-        status: 400,
-      };
-    }
-  }
-}
-
-export async function DeleteVideo(formData: FormData) {
-  const id = Number(formData.get("id"));
-
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/video/${id}`;
-
-  try {
-    const response = await fetchServer(url, {
-      method: "DELETE",
-    });
-
-    const data = await response?.json();
-
-    console.log(response);
-
-    if (response.status !== 200) {
-      return {
-        message: data.detail,
-        status: response?.status,
-      };
-    }
-
-    revalidatePath("dashboard");
-
-    return {
-      message: data.message,
-      status: response?.status,
-    };
-  } catch (error) {
-    console.error("Failed to delete video", error);
-    throw error;
-  }
-}
+};

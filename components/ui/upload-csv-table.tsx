@@ -9,28 +9,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table";
+} from "./table"; // Assuming these components are already defined
 import Link from "next/link";
 
 const headers = [
-  { key: "equipmentId", label: "ID do Equipamento" },
-  { key: "averageValue", label: "Valor Médio (°C)" },
+  { key: "filename", label: "Nome do Arquivo" },
+  { key: "status", label: "Status" },
+  { key: "errors", label: "Erros" },
+  { key: "createdAt", label: "Data de Envio" },
 ];
 
-interface EquipmentAvarageData {
-  equipmentId: string;
-  averageValue: string;
-  [key: string]: string | number;
+interface CsvUploadData {
+  id: string;
+  filename: string;
+  status: string;
+  errors: string | null;
+  createdAt: string;
+  updatedAt: string;
+  [key: string]: string | number | null;
 }
 
-export default function SensorReadingTable({
-  data,
-}: {
-  data: EquipmentAvarageData[];
-}) {
+export default function UploadCsvTable({ data }: { data: CsvUploadData[] }) {
   const [sort, setSort] = useState({
-    keyToSort: "equipmentId",
-    direction: "asc",
+    keyToSort: "createdAt",
+    direction: "desc",
   });
 
   const handleHeaderClick = (key: string) => {
@@ -40,26 +42,31 @@ export default function SensorReadingTable({
   };
 
   const sortedData = [...data].sort((a, b) => {
-    if (a[sort.keyToSort] < b[sort.keyToSort]) {
+    const aValue = a[sort.keyToSort];
+    const bValue = b[sort.keyToSort];
+
+    if (aValue === null || aValue === undefined) return 1;
+    if (bValue === null || bValue === undefined) return -1;
+
+    if (aValue < bValue) {
       return sort.direction === "asc" ? -1 : 1;
     }
-    if (a[sort.keyToSort] > b[sort.keyToSort]) {
+    if (aValue > bValue) {
       return sort.direction === "asc" ? 1 : -1;
     }
     return 0;
   });
 
-  const [isMounted, setIsMounted] = useState(false); // State to detect if the component has mounted
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); // Set to true once the component has mounted
+    setIsMounted(true);
   }, []);
 
   if (!isMounted) return null;
 
   return (
-    <Table className="w-fit">
-      <TableCaption>Últimos valores médios de sensores</TableCaption>
+    <Table className="w-full">
       <TableHeader>
         <TableRow>
           {headers.map((header) => (
@@ -87,12 +94,16 @@ export default function SensorReadingTable({
       <TableBody>
         {sortedData.map((entry, index) => (
           <TableRow key={index}>
-            <Link href={`/equipment/${entry.equipmentId}`}>
-              <TableCell className="w-full font-medium hover:bg-slate-800">
-                {entry.equipmentId}
+            <Link href={`/csv-upload/${entry.id}`}>
+              <TableCell className="font-medium hover:bg-slate-800">
+                {entry.filename}
               </TableCell>
             </Link>
-            <TableCell>{parseFloat(entry.averageValue).toFixed(2)}°C</TableCell>
+            <TableCell>{entry.status}</TableCell>
+            <TableCell className="max-w-24 overflow-auto">
+              {entry.errors ? entry.errors : "Nenhum erro"}
+            </TableCell>
+            <TableCell>{new Date(entry.createdAt).toLocaleString()}</TableCell>
           </TableRow>
         ))}
       </TableBody>
