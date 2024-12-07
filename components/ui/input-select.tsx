@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/utils/cn";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface InputOption {
   value: string;
@@ -12,7 +13,7 @@ interface SelectGenericProps {
   className?: string;
   options: InputOption[];
   defaultValue?: string;
-  handleChange?: (value: string) => void;
+  // handleChange?: (value: string) => void;
 }
 
 export const SelectInput: React.FC<SelectGenericProps> = ({
@@ -20,8 +21,25 @@ export const SelectInput: React.FC<SelectGenericProps> = ({
   className,
   options,
   defaultValue,
-  handleChange,
+  // handleChange,
 }: SelectGenericProps) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const handleChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (value) {
+      params.set("timePeriod", value);
+      params.set("_refresh", Date.now().toString());
+    } else {
+      params.delete("timePeriod");
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div className="relative w-fit">
       <select

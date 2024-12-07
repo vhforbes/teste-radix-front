@@ -17,8 +17,6 @@ export const authConfig = {
       if (user && user.access_token) {
         const decodedJwt: CustomJwtPayload = jwtDecode(user.access_token);
 
-        console.log(decodedJwt);
-
         return {
           ...token,
           access_token: user.access_token,

@@ -30,8 +30,6 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
             },
           );
 
-          console.log(res);
-
           if (!res.ok) {
             if (res.status === 401) {
               throw new UnauthorizedError("Invalid credentials provided.");
@@ -40,8 +38,6 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           }
 
           const data: AuthenticationResponse = await res.json();
-
-          console.log(data);
 
           if (isAuthenticationResponse(data)) {
             return {

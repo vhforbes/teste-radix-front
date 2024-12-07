@@ -14,8 +14,6 @@ export const CreateUserForm = () => {
   const create_user = async (form_data: FormData) => {
     const response = await CreateUser(form_data);
 
-    console.log(response);
-
     if (response?.status !== 201) {
       toast.error("Algo deu errado!");
       setErrorMessage(response?.message);
