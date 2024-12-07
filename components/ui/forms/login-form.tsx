@@ -5,12 +5,25 @@ import { useFormState } from "react-dom";
 import { InputGeneric } from "../input-generic";
 import { authenticate } from "@/lib/auth.actions";
 import { Button } from "../button";
+import Image from "next/image";
 
 export const LoginForm = () => {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined);
 
   return (
-    <form noValidate className="w-full" action={dispatch}>
+    <form
+      noValidate
+      className="flex w-full flex-col justify-between"
+      action={dispatch}
+    >
+      <Image
+        alt="radix logo"
+        className="mx-auto"
+        src={"/radix.jpg"}
+        width={120}
+        height={120}
+      />
+
       <div>
         <label htmlFor="email" className="input-label">
           Email:

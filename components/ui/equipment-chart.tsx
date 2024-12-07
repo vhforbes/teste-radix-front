@@ -60,7 +60,7 @@ export function EquipmentChart({ rawData }: { rawData: any }) {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="70%" height="50vh">
             <AreaChart data={chartData} margin={{ left: 12, right: 12 }}>
               <CartesianGrid vertical={false} />
               <XAxis

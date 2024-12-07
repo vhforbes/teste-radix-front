@@ -26,7 +26,9 @@ export default async function Page({
       <p className="mb-4 font-bold">
         Histórico de temperaturas do equipamento {id}
       </p>
-      <EquipmentChart rawData={data} />
+      <div className="w-1/2">
+        <EquipmentChart rawData={data} />
+      </div>
     </div>
   );
 }

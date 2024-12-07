@@ -7,6 +7,7 @@ import { CreateUser } from "@/lib/actions";
 import { toast } from "sonner";
 import { useState } from "react";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export const CreateUserForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,6 +30,14 @@ export const CreateUserForm = () => {
 
   return (
     <form noValidate className="w-full" action={create_user}>
+      <Image
+        alt="radix logo"
+        className="mx-auto"
+        src={"/radix.jpg"}
+        width={120}
+        height={120}
+      />
+
       <div>
         <label htmlFor="email" className="input-label">
           Nome:
